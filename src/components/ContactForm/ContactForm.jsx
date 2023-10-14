@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/contactsSlice';
 import { getContacts } from 'redux/selector';
 import { nanoid } from '@reduxjs/toolkit';
+import { addContactToBackend } from 'redux/operations';
 
 const ContactForm = () => {
-  const contacts = useSelector(getContacts);
+  const { items } = useSelector(getContacts);
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
 
   const handlerInputChange = e => {
     const { name, value } = e.target;
@@ -19,8 +19,8 @@ const ContactForm = () => {
       case 'name':
         setName(value);
         return;
-      case 'number':
-        setNumber(value);
+      case 'phone':
+        setPhone(value);
         return;
       default:
         return;
@@ -30,14 +30,14 @@ const ContactForm = () => {
   const handlerFormSubmit = e => {
     e.preventDefault();
     const similarElement = element => element.name === name;
-    if (contacts.find(similarElement)) {
+    if (items && items.find(similarElement)) {
       alert(name + ' is already in contacts.');
       return;
     }
-
-    dispatch(addContact([{ id: nanoid(), name, number }]));
+    const newContact = { id: nanoid(), name, phone };
+    dispatch(addContactToBackend(newContact));
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   return (
@@ -63,8 +63,8 @@ const ContactForm = () => {
           className={css.input}
           onChange={handlerInputChange}
           type="tel"
-          name="number"
-          value={number}
+          name="phone"
+          value={phone}
           placeholder="099-123-45-67 - 0991234567"
           // pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
