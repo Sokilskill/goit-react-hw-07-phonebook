@@ -1,48 +1,41 @@
 import axios from 'axios';
-import {
-  fetchingInProgress,
-  fetchingSuccess,
-  fetchingError,
-} from './contacts/contactsSlice.js';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 axios.defaults.baseURL = 'https://65264e9f917d673fd76bfd10.mockapi.io/api';
 
-const fetchContacts = () => async dispatch => {
-  try {
-    // Індикатор завантаження
-    dispatch(fetchingInProgress());
-    // HTTP-запит
-    const response = await axios.get('/contacts');
-    // Обробка даних
-
-    dispatch(fetchingSuccess(response.data));
-  } catch (e) {
-    // Обробка помилки
-    dispatch(fetchingError(e.message));
+export const fetchContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get('/contacts');
+      // При успішному запиті повертаємо проміс із даними
+      return response.data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.message);
+    }
   }
-};
+);
 
-const addContactToBackend = contact => async dispatch => {
-  try {
-    dispatch(fetchingInProgress());
-    await axios.post('/contacts', contact);
-
-    dispatch(fetchContacts());
-  } catch (e) {
-    dispatch(fetchingError(e.message));
-    console.error(e);
+export const addContact = createAsyncThunk(
+  'contacts/addContact',
+  async (contact, thunkAPI) => {
+    try {
+      const response = await axios.post('/contacts', contact);
+      return response.data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.massege);
+    }
   }
-};
+);
 
-const deleteContactFromBackend = contactId => async dispatch => {
-  try {
-    dispatch(fetchingInProgress());
-    await axios.delete(`/contacts/${contactId}`);
-    dispatch(fetchContacts());
-  } catch (e) {
-    dispatch(fetchingError(e.message));
-    console.error(e);
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId, thunkAPI) => {
+    try {
+      const response = await axios.delete(`/contacts/${contactId}`);
+      return response.data;
+    } catch (e) {
+      return thunkAPI.rejectWithValue(e.massege);
+    }
   }
-};
-
-export { fetchContacts, addContactToBackend, deleteContactFromBackend };
+);

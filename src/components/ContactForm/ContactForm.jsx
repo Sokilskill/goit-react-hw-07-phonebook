@@ -3,7 +3,7 @@ import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts } from 'redux/selector';
 import { nanoid } from '@reduxjs/toolkit';
-import { addContactToBackend } from 'redux/operations';
+import { addContact } from 'redux/operations';
 
 const ContactForm = () => {
   const { items } = useSelector(getContacts);
@@ -35,7 +35,7 @@ const ContactForm = () => {
       return;
     }
     const newContact = { id: nanoid(), name, phone };
-    dispatch(addContactToBackend(newContact));
+    dispatch(addContact(newContact));
     setName('');
     setPhone('');
   };

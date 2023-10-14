@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { addContact, deleteContact, fetchContacts } from 'redux/operations';
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState: {
@@ -6,27 +7,48 @@ const contactsSlice = createSlice({
     isLoading: false,
     error: null,
   },
-  reducers: {
-    fetchingInProgress(state) {
+  extraReducers: builder => {
+    builder.addCase(fetchContacts.pending, state => {
       state.isLoading = true;
-    },
-    fetchingSuccess(state, action) {
+    });
+    builder.addCase(fetchContacts.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
       state.items = action.payload;
-    },
-    fetchingError(state, action) {
+    });
+    builder.addCase(fetchContacts.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
-    },
+    });
+    builder.addCase(addContact.pending, state => {
+      state.isLoading = true;
+    });
+    builder.addCase(addContact.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.error = null;
+      state.items.unshift(action.payload);
+    });
+    builder.addCase(addContact.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteContact.pending, state => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteContact.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.error = null;
+      const index = state.items.findIndex(
+        contact => contact.id === action.payload.id
+      );
+      state.items.splice(index, 1);
+    });
+    builder.addCase(deleteContact.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    });
   },
 });
 
-export const {
-  addContact,
-  deleteContact,
-  fetchingInProgress,
-  fetchingSuccess,
-  fetchingError,
-} = contactsSlice.actions;
-export default contactsSlice.reducer;
+const contactsSliceReducer = contactsSlice.reducer;
+export default contactsSliceReducer;

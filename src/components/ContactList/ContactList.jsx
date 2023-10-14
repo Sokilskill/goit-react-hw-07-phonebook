@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import css from './ContactList.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts, getFilter } from 'redux/selector';
-import { deleteContactFromBackend, fetchContacts } from 'redux/operations';
+import { deleteContact, fetchContacts } from 'redux/operations';
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const ContactList = () => {
               <button
                 type="button"
                 onClick={() => {
-                  dispatch(deleteContactFromBackend(id));
+                  dispatch(deleteContact(id));
                 }}
               >
                 Delete
