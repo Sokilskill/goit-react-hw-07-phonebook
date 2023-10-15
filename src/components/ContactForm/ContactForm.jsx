@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/selector';
+import { selectContacts } from 'redux/selector';
 import { nanoid } from '@reduxjs/toolkit';
 import { addContact } from 'redux/operations';
 
 const ContactForm = () => {
-  const { items } = useSelector(getContacts);
+  const { items } = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
@@ -14,7 +14,6 @@ const ContactForm = () => {
 
   const handlerInputChange = e => {
     const { name, value } = e.target;
-
     switch (name) {
       case 'name':
         setName(value);
